@@ -9,6 +9,7 @@ import { FIREBASE_AUTH } from '../../firebase/config';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { submitReview } from '../../firebase/review';
 import { Colors } from '../../constants/colors';
+import CustomText from '../elements/Customtext';
 
 const ProductScreen = () => {
 
@@ -76,84 +77,82 @@ const ProductScreen = () => {
     };
 
     if (loading) {
-        return <ActivityIndicator size="large"style={{top:40}} color={Colors.primary} />;
+        return <ActivityIndicator size="large" style={{ top: 40 }} color={Colors.primary} />;
     }
 
     const navigation = useNavigation();
 
     return (
         <>
-        <View style={{ flex: 1, backgroundColor: Colors.background }}>
-            {/* Product Image and Details */}
-            <View style={styles.productInfo}>
-                <View style={styles.productImageContainer}>
-                    <TouchableOpacity onPress={() => navigation.navigate({ pathname: 'image', params: { imageUrl: encodeURIComponent(product.image ? product.image : product.images[0]) } })}>
-                        <Image style={styles.productImage} source={{ uri: product.image ? product.image : product.images[0] }} />
-                    </TouchableOpacity>
-                    <View style={styles.additionalImagesContainer}>
-                        {/* Additional images can be rendered here */}
+            <View style={{ flex: 1, backgroundColor: Colors.background }}>
+                {/* Product Image and Details */}
+                <View style={styles.productInfo}>
+                    <View style={styles.productImageContainer}>
+                        <TouchableOpacity onPress={() => navigation.navigate({ pathname: 'image', params: { imageUrl: encodeURIComponent(product.image ? product.image : product.images[0]) } })}>
+                            <Image style={styles.productImage} source={{ uri: product.image ? product.image : product.images[0] }} />
+                        </TouchableOpacity>
+                        <View style={styles.additionalImagesContainer}>
+                            {/* Additional images can be rendered here */}
+                        </View>
                     </View>
-                </View>
-                <View style={styles.productDetails}>
-                    <View style={{ flexDirection: 'row', alignItems: "center" }}>
-                        <Text style={styles.productName}>{product.name}</Text>
-                        <TouchableOpacity style={styles.favoriteButton} onPress={() => addToFavorites(product)}>
-                            <Ionicons name='heart' color='white' size={25} />
+                    <View style={styles.productDetails}>
+                        <View style={{ flexDirection: 'row', alignItems: "center" }}>
+                            <Text style={styles.productName}>{product.name}</Text>
+                            <TouchableOpacity style={styles.favoriteButton} onPress={() => addToFavorites(product)}>
+                                <Ionicons name='heart' color='white' size={25} />
+                            </TouchableOpacity>
+                        </View>
+                        {product.offer ? (
+                            <Text style={styles.productPrice}>${product.offer} <Text style={styles.productPrice2}>{product.price}</Text></Text>
+                        ) : (
+                            <Text style={styles.productPrice}>${product.price}</Text>
+                        )}
+                        <Text style={styles.productDescription}>{product.disc}</Text>
+                        {product.quantity === 2 && <Text style={styles.productPrice}>Only two left in stock!</Text>}
+                        {product.quantity === 1 && <Text style={styles.productPrice}>Only one left in stock!</Text>}
+                        <TouchableOpacity style={styles.addToCartButton} onPress={() => handleAddToCart(product)}>
+                            <Text style={styles.addToCartButtonText}>Add to Cart</Text>
                         </TouchableOpacity>
                     </View>
-                    {product.offer ? (
-                        <Text style={styles.productPrice}>${product.offer} <Text style={styles.productPrice2}>{product.price}</Text></Text>
-                    ) : (
-                        <Text style={styles.productPrice}>${product.price}</Text>
-                    )}
-                    <Text style={styles.productDescription}>{product.disc}</Text>
-                    {product.quantity === 2 && <Text style={styles.productPrice}>Only two left in stock!</Text>}
-                    {product.quantity === 1 && <Text style={styles.productPrice}>Only one left in stock!</Text>}
-                    <TouchableOpacity style={styles.addToCartButton} onPress={() => handleAddToCart(product)}>
-                        <Text style={styles.addToCartButtonText}>Add to Cart</Text>
-                    </TouchableOpacity>
+                </View>
+
+                {/* Rating */}
+                {averageRating ? (
+                    <View style={[styles.ratingContainer, { paddingBottom: 10 }]}>
+                        {[...Array(Math.round(averageRating))].map((_, i) => (
+                            <Ionicons key={i} name="star" size={30} color="#657786" />
+                        ))}
+                    </View>
+                ) : (
+                    <Text style={styles.noRatingText}>No Rating</Text>
+                )}
+
+                {/* Reviews Section */}
+                <CustomText style={styles.reviewTitle}>Reviews</CustomText>
+                <View style={{ height: 300,borderRadius: 30, paddingHorizontal: 10, backgroundColor: Colors.cardBackground, marginHorizontal: 10 }}>
+                    <ReviewList
+                        reviews={reviews}
+                        user={user}
+                        setEditReviewId={setEditReviewId}
+                        setRating={setRating}
+                        setReview={setReview}
+                        handleDeleteReview={handleDeleteReview}
+                    />
                 </View>
             </View>
-
-            {/* Rating */}
-            {averageRating ? (
-                <View style={[styles.ratingContainer, { paddingBottom: 10 }]}>
-                    {[...Array(Math.round(averageRating))].map((_, i) => (
-                        <Ionicons key={i} name="star" size={30} color="#657786" />
-                    ))}
-                </View>
-            ) : (
-                <Text style={styles.noRatingText}>No Rating</Text>
-            )}
-
-            {/* Reviews Section */}
-            <Text style={styles.reviewTitle}>Reviews</Text>
-            <View style={{ height: '55%', borderRadius: 30, paddingHorizontal: 10, backgroundColor: Colors.cardBackground, marginHorizontal: 10 }}>
-                <ReviewList
-                    reviews={reviews}
-                    user={user}
-                    setEditReviewId={setEditReviewId}
+            <KeyboardAvoidingView>
+                <ReviewInput
+                    rating={rating}
                     setRating={setRating}
+                    review={review}
                     setReview={setReview}
-                    handleDeleteReview={handleDeleteReview}
+                    handleReview={handleReview}
+                    handleEditReview={handleEditReview}
+                    handleCancelEditing={handleCancelEditing}
+                    editReviewId={editReviewId}
                 />
-            </View>
-     
-           
-        </View>
-               <KeyboardAvoidingView>
-               <ReviewInput
-                   rating={rating}
-                   setRating={setRating}
-                   review={review}
-                   setReview={setReview}
-                   handleReview={handleReview}
-                   handleEditReview={handleEditReview}
-                   handleCancelEditing={handleCancelEditing}
-                   editReviewId={editReviewId}
-               />
-           </KeyboardAvoidingView>
-           </>
+            </KeyboardAvoidingView>
+        </>
     );
 };
 
@@ -227,11 +226,10 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     reviewTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
+        fontSize: 22,
         color: '#657786',
         marginBottom: 10,
-        paddingLeft: 10,
+        paddingLeft: 20,
     },
     cartIconContainer: {
         position: 'absolute',

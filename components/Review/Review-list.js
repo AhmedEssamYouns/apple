@@ -21,8 +21,8 @@ const ReviewList = ({ reviews, user, setEditReviewId, setRating, setReview, hand
       data={reviews}
       renderItem={renderItem}
       ListEmptyComponent={
-        <View style={{justifyContent:'center',marginTop:'20%'}}>
-        <CustomText style={{ fontSize: 30, alignSelf: 'center'}}>No Reviews yet</CustomText>
+        <View style={{ justifyContent: 'center', marginTop: '30%' }}>
+          <CustomText style={{ fontSize: 30, alignSelf: 'center', color: Colors.secondary }}>No Reviews yet</CustomText>
         </View>
       }
       keyExtractor={(item) => item.id.toString()}
@@ -34,7 +34,8 @@ const ReviewList = ({ reviews, user, setEditReviewId, setRating, setReview, hand
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 10,
-    paddingTop:10,
+    paddingTop: 10,
+    paddingBottom:110,
     borderRadius: 10,
   },
 });
