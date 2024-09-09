@@ -1,7 +1,7 @@
 import { FIREBASE_AUTH, db, storage } from './config';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { updateProfile } from 'firebase/auth';
-import { updateDoc, doc, getDoc,onSnapshot } from "firebase/firestore";
+import { updateDoc, doc, getDoc, onSnapshot } from "firebase/firestore";
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
@@ -22,9 +22,12 @@ export const fetchUserData = (setUserData, setIsLoading) => {
 export const getUserData = async (setUserData, setName, setAddress, setPhone, setImage) => {
     const user = FIREBASE_AUTH.currentUser;
     const userDocRef = doc(db, "users", user.email);
-
-    setName(user.displayName);
-    setImage(user.photoURL);
+    if (setName) {
+        setName(user.displayName);
+    }
+    if (setImage) {
+        setImage(user.photoURL);
+    }
 
     const docSnap = await getDoc(userDocRef);
     if (docSnap.exists()) {

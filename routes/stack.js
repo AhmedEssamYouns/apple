@@ -15,6 +15,7 @@ import OrderPage from '../screens/Purchase-Flow/orders';
 import ContactUsPage from '../screens/Purchase-Flow/contact';
 import ProductScreen from '../components/products/Product-screen';
 import CustomHeader2 from '../components/elements/header';
+import CheckoutPage from '../screens/Purchase-Flow/cheakout';
 
 const Stack = createStackNavigator();
 
@@ -82,6 +83,7 @@ const MainTabNavigator = () => {
                         />
                         <Stack.Screen name="cart" component={CartScreen} />
                         <Stack.Screen name="orders" component={OrderPage} />
+                        <Stack.Screen name="checkout" component={CheckoutPage} />
                         <Stack.Screen name="contact" component={ContactUsPage} />
                         <Stack.Screen name="Product" component={ProductScreen}
                             options={{

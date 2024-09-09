@@ -4,11 +4,12 @@ import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { AlertNotificationRoot } from 'react-native-alert-notification';
 import { calculateCartTotal, getProductsForCart, updateCartItems, removeAllItemsFromCart, removeItemFromCart } from '../../firebase/cart'; // Import new function
 import { Colors } from '../../constants/colors';
+import { useNavigation } from '@react-navigation/native';
 
 const CartScreen = () => {
     const [products, setProducts] = useState([]);
     const [cartItems, setCartItems] = useState([]);
-
+    const navigation = useNavigation()
     // Fetch products and cart items
     useEffect(() => {
         const unsubscribe = getProductsForCart(setProducts, setCartItems);
@@ -103,7 +104,7 @@ const CartScreen = () => {
                         </TouchableOpacity>
                         <View style={styles.footer}>
                             <Text style={styles.total}>Total price: ${totalPrice}</Text>
-                            <TouchableOpacity style={styles.checkoutButton}>
+                            <TouchableOpacity style={styles.checkoutButton} onPress={() =>navigation.navigate('checkout')}>
                                 <Text style={styles.checkoutButtonText}>Go to Checkout</Text>
                             </TouchableOpacity>
                         </View>
@@ -201,9 +202,9 @@ const styles = StyleSheet.create({
     },
     quantityControls: {
         backgroundColor: '#fff',
-        elevation:2,
-        borderRadius:20,
-        right:10,
+        elevation: 2,
+        borderRadius: 20,
+        right: 10,
         padding: 10,
         flexDirection: 'row',
         alignItems: 'center',
