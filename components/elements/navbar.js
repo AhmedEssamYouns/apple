@@ -24,8 +24,7 @@ const CustomHeader = ({ }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>
-                apple<Text style={styles.logo}>store</Text>
+            <Text style={styles.title}><Text style={{fontFamily:"title"}}>Apple</Text><Text style={styles.logo}>Store</Text>
             </Text>
             <View style={styles.iconsContainer}>
                 <TouchableOpacity onPress={() => navigation.navigate('cart')}>
@@ -65,9 +64,11 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         color: Colors.primary,
+        fontFamily:'title'
     },
     logo: {
         color: Colors.secondary,
+        fontFamily:'title'
     },
     iconsContainer: {
         gap:15,

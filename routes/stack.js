@@ -10,6 +10,7 @@ import UserProfile from '../screens/auth/profile';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import EditProfile from '../screens/auth/editProfile';
 import ImageScreen from '../components/elements/image';
+import CartScreen from '../screens/Purchase-Flow/cart';
 
 const Stack = createStackNavigator();
 
@@ -72,8 +73,10 @@ const MainTabNavigator = () => {
                             name="edit"
                             component={EditProfile}
                         />
-                        <Stack.Screen name="ImageScreen" component={ImageScreen} 
-                        options={{ headerShown: false }}
+                        <Stack.Screen name="ImageScreen" component={ImageScreen}
+                            options={{ headerShown: false }}
+                        />
+                        <Stack.Screen name="cart" component={CartScreen}
                         />
                     </>
                 ) : (

@@ -2,11 +2,11 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { Colors } from '../../constants/colors';
-
+import CustomText from './Customtext';
 const Footer = () => {
     return (
         <View>
-            <Text style={styles.follow}>Follow us on social media</Text>
+            <CustomText style={styles.follow}>Follow us on social media</CustomText>
             <View style={styles.footerContainer}>
                 <TouchableOpacity style={styles.socialIcon}>
                     <Feather name="facebook" size={24} color={Colors.primary} />

@@ -45,11 +45,11 @@ export async function handleAddToCart(product) {
         ToastAndroid.show('You must be logged in to add items to the cart.', ToastAndroid.LONG);
     }
 }
-
 export const getProductsForCart = (setProducts, setCartItems) => {
     const productsRef = collection(db, "products");
 
-    const unsubscribe = onSnapshot(productsRef, async (snapshot) => {
+    // Listen to changes in products collection
+    const unsubscribeProducts = onSnapshot(productsRef, async (snapshot) => {
         const productsData = [];
         snapshot.forEach((doc) => {
             productsData.push({ id: doc.id, ...doc.data() });
@@ -61,37 +61,50 @@ export const getProductsForCart = (setProducts, setCartItems) => {
             const { uid } = currentUser;
             const cartRef = doc(db, "carts", uid);
 
-            const cartDoc = await getDoc(cartRef);
-            if (cartDoc.exists()) {
-                const cartData = cartDoc.data();
-                const removedItems = [];
-                const updatedCartItems = cartData.items.filter((item) => {
-                    const product = productsData.find((p) => p.id === item.id);
-                    if (product && product.quantity === 0) {
-                        removedItems.push(product.name);
-                        return false;
+            // Listen to changes in the user's cart document
+            const unsubscribeCart = onSnapshot(cartRef, (cartDoc) => {
+                if (cartDoc.exists()) {
+                    const cartData = cartDoc.data();
+                    const removedItems = [];
+
+                    // Filter out products that are out of stock
+                    const updatedCartItems = cartData.items.filter((item) => {
+                        const product = productsData.find((p) => p.id === item.id);
+                        if (product && product.quantity === 0) {
+                            removedItems.push(product.name);
+                            return false;
+                        }
+                        return true;
+                    });
+
+                    if (removedItems.length > 0) {
+                        Alert.alert(`Items '${removedItems.join(", ")}' removed due to being out of stock.`);
                     }
-                    return true;
-                });
 
-                if (removedItems.length > 0) {
-                    Alert.alert(`Items '${removedItems.join(", ")}' removed due to being out of stock.`);
+                    // Update the cart items in real-time
+                    setCartItems(updatedCartItems);
+                } else {
+                    setCartItems([]); // Clear the cart if it no longer exists
                 }
+            }, (error) => {
+                console.error("Error fetching cart data:", error);
+            });
 
-                updateDoc(cartRef, { items: updatedCartItems })
-                    .catch((error) => console.error("Error updating cart items:", error));
+            setProducts(productsData); // Update the products data
 
-                setCartItems(updatedCartItems);
-            }
+            // Return both unsubscribe functions
+            return () => {
+                unsubscribeProducts();
+                unsubscribeCart();
+            };
         }
-
-        setProducts(productsData);
     }, (error) => {
         console.error("Error fetching products:", error);
     });
 
-    return unsubscribe;
+    return unsubscribeProducts;
 };
+
 
 
 
@@ -119,7 +132,6 @@ export const getCartItems = (setCartItems) => {
 
 
 
-
 export const updateCartItems = (updatedCartItems) => {
     const currentUser = FIREBASE_AUTH.currentUser;
 
@@ -133,7 +145,6 @@ export const updateCartItems = (updatedCartItems) => {
             });
     }
 };
-
 
 
 // Function to fetch and monitor cart data
@@ -166,4 +177,41 @@ export const fetchCartData = (setCartItems, setIsLoading) => {
 // Function to calculate total items in the cart
 export const calculateCartTotal = (cartItems) => {
   return cartItems.reduce((acc, item) => acc + item.quantity, 0);
+};
+
+
+  export const removeAllItemsFromCart = (setCartItems) => {
+    const currentUser = FIREBASE_AUTH.currentUser;
+  
+    if (currentUser) {
+      const { uid } = currentUser;
+      const cartRef = doc(db, "carts", uid);
+  
+      updateDoc(cartRef, { items: [] })
+        .then(() => setCartItems([]))
+        .catch((error) => {
+          console.error("Error removing all items from cart:", error);
+        });
+    }
+  };
+  
+
+
+  export const removeItemFromCart = async (itemId, setCartItems) => {
+    const currentUser = FIREBASE_AUTH.currentUser;
+
+    if (currentUser) {
+        const { uid } = currentUser;
+        const cartRef = doc(db, "carts", uid);
+
+        const cartDoc = await getDoc(cartRef);
+        if (cartDoc.exists()) {
+            const cartData = cartDoc.data();
+            const updatedItems = cartData.items.filter(item => item.id !== itemId);
+
+            await updateDoc(cartRef, { items: updatedItems });
+            setCartItems(updatedItems);
+            ToastAndroid.show('Item removed from cart.', ToastAndroid.SHORT);
+        }
+    }
 };

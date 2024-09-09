@@ -4,6 +4,7 @@ import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { handleSignIn } from "../../firebase/auth";
 import { Colors } from "../../constants/colors";
+import CustomText from "../../components/elements/Customtext";
 
 const SignInScreen = () => {
     const [email, setEmail] = useState("");
@@ -20,11 +21,10 @@ const SignInScreen = () => {
     };
 
     return (
-        <ScrollView style={{ backgroundColor: "#F5F8FA" }}>
             <View style={styles.container}>
                 <View style={styles.welcomeContainer}>
-                    <Text style={styles.welcomeText}>Welcome back!</Text>
-                    <Text style={styles.niceWords}>Sign in to continue</Text>
+                    <CustomText style={styles.welcomeText}>Welcome back!</CustomText>
+                    <CustomText style={styles.niceWords}>Sign in to continue</CustomText>
                 </View>
                 <View style={styles.inputContainer}>
                     <Text style={styles.inputLabel}>Email</Text>
@@ -65,12 +65,11 @@ const SignInScreen = () => {
                 </Text>
                 <View>
                     <View style={styles.auther}>
-                        <Text style={styles.font}>made by</Text>
-                        <Text style={styles.font}>ahmed essam</Text>
+                        <CustomText style={styles.font}>made by</CustomText>
+                        <CustomText style={styles.font2}>ahmed essam</CustomText>
                     </View>
                 </View>
             </View>
-        </ScrollView>
     );
 };
 
@@ -79,6 +78,7 @@ const styles = StyleSheet.create({
         paddingTop: '36%',
         flex: 1,
         padding: 40,
+        backgroundColor:Colors.background
     },
     welcomeContainer: {
         marginBottom: 30,
@@ -97,6 +97,10 @@ const styles = StyleSheet.create({
     },
     font: {
         color: Colors.textPrimary,
+    },
+    font2: {
+        color: Colors.textPrimary,
+        fontSize:25,
     },
     inputContainer: {
         marginBottom: 15,
@@ -145,7 +149,7 @@ const styles = StyleSheet.create({
     auther: {
         alignSelf: 'center',
         color: Colors.secondary,
-        paddingTop: '30%',
+        paddingTop: '20%',
         fontSize: 20,
         alignItems: 'center',
     },
