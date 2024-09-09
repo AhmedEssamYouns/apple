@@ -1,6 +1,7 @@
 import { collection, doc, deleteDoc, updateDoc, addDoc, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "./config";
 import { Toast, ALERT_TYPE, Dialog, AlertNotificationRoot } from 'react-native-alert-notification';
+import { ToastAndroid } from "react-native";
 
 
 export async function deleteReview(reviewId) {
@@ -19,17 +20,8 @@ export async function deleteReview(reviewId) {
         });
     } catch (error) {
         console.error("Error deleting review: ", error);
-        Toast.show({
-            type: ALERT_TYPE.ERROR,
-            textBody: "Error deleting review, please try again later",
-            autoClose: 2000,
-            titleStyle: {
-                color: '#657786',
-            },
-            textBodyStyle: {
-                color: '#657786',
-            },
-        });
+        ToastAndroid.show( "Error deleting review, please try again later", ToastAndroid.SHORT);
+
     }
 }
 
@@ -50,17 +42,8 @@ export async function editReview(reviewId, rating, review, reviews, setEditRevie
 
         setEditReviewId(null);
 
-        Toast.show({
-            type: ALERT_TYPE.SUCCESS,
-            textBody: "Review updated",
-            autoClose: 2000,
-            titleStyle: {
-                color: '#657786',
-            },
-            textBodyStyle: {
-                color: '#657786',
-            },
-        });
+        ToastAndroid.show( "Review updated", ToastAndroid.SHORT);
+
     } catch (error) {
         console.error("Error updating review: ", error);
         Toast.show({
@@ -79,17 +62,8 @@ export async function editReview(reviewId, rating, review, reviews, setEditRevie
 
 export async function submitReview(product, review, rating, user, reviews, setHasSubmittedReview) {
     if (!review || !rating) {
-        Toast.show({
-            type: ALERT_TYPE.WARNING,
-            textBody: "Please enter a rating and a review.",
-            autoClose: 2000,
-            titleStyle: {
-                color: '#657786',
-            },
-            textBodyStyle: {
-                color: '#657786',
-            },
-        });
+        ToastAndroid.show("Please enter a rating and a review.", ToastAndroid.SHORT);
+
         return;
     }
 
@@ -106,17 +80,9 @@ export async function submitReview(product, review, rating, user, reviews, setHa
             edit: ''
         });
 
-        Toast.show({
-            type: ALERT_TYPE.SUCCESS,
-            textBody: "Review submitted",
-            autoClose: 2000,
-            titleStyle: {
-                color: '#657786',
-            },
-            textBodyStyle: {
-                color: '#657786',
-            },
-        });
+  
+        ToastAndroid.show("Review submitted", ToastAndroid.SHORT);
+
 
         setHasSubmittedReview(true);
 

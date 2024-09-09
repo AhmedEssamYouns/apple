@@ -1,61 +1,79 @@
 import React from 'react';
-import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, StyleSheet, Keyboard } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../constants/colors';
+import { Feather } from '@expo/vector-icons';
 
 const ReviewInput = ({ rating, setRating, review, setReview, handleReview, handleEditReview, handleCancelEditing, editReviewId }) => {
+
+  const onSubmitReview = () => {
+    Keyboard.dismiss();
+    if (handleReview) {
+      handleReview();
+    }
+  };
+
   return (
     <View style={styles.reviewForm}>
-      <View style={styles.ratingContainer}>
-        {[1, 2, 3, 4, 5].map((num) => (
-          <TouchableOpacity
-            key={num}
-            style={[
-              styles.ratingStar,
-              rating >= num && styles.selectedRatingStar,
-            ]}
-            onPress={() => setRating(num)}
-          >
-            <Ionicons
-              name="star"
-              size={30}
-              color={rating >= num ? "#657786" : "#E1E8ED"}
-            />
-          </TouchableOpacity>
-        ))}
-      </View>
-      <TextInput
-        style={styles.reviewInput}
-        placeholder={editReviewId ? "Update your review" : "Write a review"}
-        fontFamily="SunshineRegular"
-        value={review}
-        onChangeText={setReview}
-        required={true}
-      />
-      <View style={{ flexDirection: "row", alignSelf: 'center' }}>
-        {editReviewId ? (
-          <>
+
+      <View style={styles.reviewInputContainer}>
+        <TextInput
+          placeholder={editReviewId ? "Update your review" : "Write a review"}
+          fontFamily="SunshineRegular"
+          value={review}
+          onChangeText={setReview}
+          style={styles.textInput}
+          multiline
+          numberOfLines={2}
+          placeholderTextColor="#B0B0B0"
+        />
+        <View style={styles.ratingContainer}>
+          {[1, 2, 3, 4, 5].map((num) => (
             <TouchableOpacity
-              style={styles.cancelEditingButton}
-              onPress={handleCancelEditing}
+              key={num}
+              style={[
+                styles.ratingStar,
+                rating >= num && styles.selectedRatingStar,
+              ]}
+              onPress={() => setRating(num)}
             >
-              <Text style={styles.cancelEditingButtonText}>Cancel</Text>
+              <Ionicons
+                name="star"
+                size={28}
+                color={rating >= num ? "#FFD700" : "#D3D3D3"}
+              />
             </TouchableOpacity>
+          ))}
+        </View>
+        <View style={styles.buttonContainer}>
+          {editReviewId ? (
+            <>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={handleCancelEditing}
+              >
+                <Feather
+                  name='x-circle'
+                  color={'#FF6F6F'}
+                  size={24}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.submitReviewButtonEdit}
+                onPress={() => handleEditReview(editReviewId)}
+              >
+                <Text style={styles.submitReviewButtonTextEdit}>Update</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
             <TouchableOpacity
               style={styles.submitReviewButton}
-              onPress={() => handleEditReview(editReviewId)}
+              onPress={onSubmitReview}
             >
-              <Text style={styles.submitReviewButtonText}>Edit Review</Text>
+              <Text style={styles.submitReviewButtonText}>Submit</Text>
             </TouchableOpacity>
-          </>
-        ) : (
-          <TouchableOpacity
-            style={styles.submitReviewButton}
-            onPress={handleReview}
-          >
-            <Text style={styles.submitReviewButtonText}>Submit Review</Text>
-          </TouchableOpacity>
-        )}
+          )}
+        </View>
       </View>
     </View>
   );
@@ -63,60 +81,75 @@ const ReviewInput = ({ rating, setRating, review, setReview, handleReview, handl
 
 const styles = StyleSheet.create({
   reviewForm: {
-    padding: 10,
-    borderRadius: 20,
-    backgroundColor: '#fff',
-    elevation: 5,
-    borderColor: Colors.secondary,
-    borderTopWidth: 2,
-    borderTopRightRadius: 2,
-    borderTopLeftRadius: 2
+    borderRadius: 10,
+    elevation: 4,
   },
   ratingContainer: {
-    alignSelf: 'center',
+    position:'absolute',
+    bottom:10,
+    left:10,
     flexDirection: 'row',
-    marginBottom: 10,
+    justifyContent: 'center',
+    marginBottom: 15,
   },
   ratingStar: {
-    marginHorizontal: 5,
+    marginHorizontal: 3,
   },
   selectedRatingStar: {
-    color: '#657786',
+    color: '#FFD700',
   },
-  reviewInput: {
+  reviewInputContainer: {
     borderColor: '#E1E8ED',
     borderWidth: 1,
     borderRadius: 10,
-    backgroundColor: Colors.textSecondary,
-    elevation:2,
+    backgroundColor: '#FFFFFF',
     padding: 10,
+    elevation: 1,
+  },
+  textInput: {
+    width: '100%',
     fontSize: 16,
-    marginBottom: 10,
+    marginBottom: 15,
+    paddingHorizontal: 10,
+    borderColor: '#E1E8ED',
+    borderWidth: 1,
+    borderRadius: 8,
+    backgroundColor: '#F5F5F5',
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   submitReviewButton: {
     backgroundColor: '#1DA1F2',
-    paddingHorizontal: 20,
     paddingVertical: 10,
-    borderRadius: 10,
+    paddingHorizontal: 15,
+    borderRadius: 25,
+    marginLeft: 10,
   },
   submitReviewButtonText: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 14,
     textAlign: 'center',
   },
-  cancelEditingButton: {
-    backgroundColor: '#E1E8ED',
-    paddingHorizontal: 20,
+  submitReviewButtonEdit: {
+    backgroundColor: '#1DA1F2',
     paddingVertical: 10,
-    borderRadius: 10,
-    marginRight: 10,
+    paddingHorizontal: 15,
+    borderRadius: 25,
+    marginLeft: 10,
   },
-  cancelEditingButtonText: {
-    color: '#657786',
+  submitReviewButtonTextEdit: {
+    color: '#fff',
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 14,
     textAlign: 'center',
+  },
+  cancelButton: {
+    padding: 5,
+    marginRight: 10,
   },
 });
 
