@@ -27,7 +27,9 @@ const HomeScreen = ({ navigation }) => {
             <ProductItem
                 key={product.id}
                 product={product}
-                handleProductPress={() => {/* Handle product press */ }}
+                handleProductPress={() => {
+                    navigation.navigate('Product', { product: product })
+                 }}
                 handleAddToCart={handleAddToCart}
             />
         ));

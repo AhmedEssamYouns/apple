@@ -26,7 +26,7 @@ const MenuHome = () => {
                     <Text style={styles.bestSellingTitle}>Account</Text>
 
                     <TouchableOpacity style={styles.userInfoRow} onPress={() =>
-                        navigation.navigate('orders')
+                        navigation.navigate('orders') 
                     }>
                         <Text style={styles.label}>Orders</Text>
                         <Text style={styles.info}>Your Orders</Text>

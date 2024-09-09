@@ -176,9 +176,11 @@ export const fetchCartData = (setCartItems, setIsLoading) => {
 
 // Function to calculate total items in the cart
 export const calculateCartTotal = (cartItems) => {
-  return cartItems.reduce((acc, item) => acc + item.quantity, 0);
+    if (!Array.isArray(cartItems)) {
+        return 0; // Handle cases where cartItems is not an array
+    }
+    return cartItems.reduce((total, item) => total + (item.quantity || 0), 0);
 };
-
 
   export const removeAllItemsFromCart = (setCartItems) => {
     const currentUser = FIREBASE_AUTH.currentUser;

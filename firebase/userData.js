@@ -125,3 +125,4 @@ export const handleSave = async (Name, Address, Phone, image, setIsLoading, setU
     ToastAndroid.show('Profile updated successfully', ToastAndroid.SHORT);
 
 };
+

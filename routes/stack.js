@@ -6,11 +6,15 @@ import SignInScreen from '../screens/auth/sign-in';
 import CustomHeader from '../components/elements/navbar';
 import { StatusBar, TouchableOpacity } from 'react-native';
 import { Colors } from '../constants/colors';
-import UserProfile from '../screens/auth/profile';
-import { Ionicons, Feather } from '@expo/vector-icons';
-import EditProfile from '../screens/auth/editProfile';
+import UserProfile from '../screens/Profile/profile';
+import { Feather } from '@expo/vector-icons';
+import EditProfile from '../screens/Profile/editProfile';
 import ImageScreen from '../components/elements/image';
 import CartScreen from '../screens/Purchase-Flow/cart';
+import OrderPage from '../screens/Purchase-Flow/orders';
+import ContactUsPage from '../screens/Purchase-Flow/contact';
+import ProductScreen from '../components/products/Product-screen';
+import CustomHeader2 from '../components/elements/header';
 
 const Stack = createStackNavigator();
 
@@ -76,8 +80,13 @@ const MainTabNavigator = () => {
                         <Stack.Screen name="ImageScreen" component={ImageScreen}
                             options={{ headerShown: false }}
                         />
-                        <Stack.Screen name="cart" component={CartScreen}
-                        />
+                        <Stack.Screen name="cart" component={CartScreen} />
+                        <Stack.Screen name="orders" component={OrderPage} />
+                        <Stack.Screen name="contact" component={ContactUsPage} />
+                        <Stack.Screen name="Product" component={ProductScreen}
+                            options={{
+                                header: () => <CustomHeader2 />,
+                            }} />
                     </>
                 ) : (
                     <Stack.Screen

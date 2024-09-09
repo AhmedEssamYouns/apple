@@ -76,19 +76,20 @@ const CartScreen = () => {
                                 <View style={styles.details}>
                                     <Text style={styles.title}>{item.name}</Text>
                                     <Text style={styles.price}>${item.price}</Text>
-                                    <View style={styles.quantityControls}>
-                                        <TouchableOpacity onPress={() => incrementQuantity(item.name)}>
-                                            <Feather name="plus" size={18} color={Colors.secondary} />
-                                        </TouchableOpacity>
-                                        <Text style={styles.quantity}>{item.quantity}</Text>
-                                        <TouchableOpacity onPress={() => decrementQuantity(item.id)}>
-                                            <Feather name="minus" size={18} color={Colors.secondary} />
-                                        </TouchableOpacity>
-                                    </View>
+
+                                </View>
+                                <View style={styles.quantityControls}>
+                                    <TouchableOpacity style={{ padding: 5 }} onPress={() => decrementQuantity(item.id)}>
+                                        <Feather name="minus" size={18} color={Colors.secondary} />
+                                    </TouchableOpacity>
+                                    <Text style={styles.quantity}>{item.quantity}</Text>
+                                    <TouchableOpacity style={{ padding: 5 }} onPress={() => incrementQuantity(item.name)}>
+                                        <Feather name="plus" size={18} color={Colors.secondary} />
+                                    </TouchableOpacity>
                                 </View>
                                 {/* Remove item icon */}
-                                <TouchableOpacity style={{padding:10}} onPress={() => handleRemoveItem(item.id)}>
-                                    <MaterialCommunityIcons name="trash-can" size={24}  color={Colors.secondary} />
+                                <TouchableOpacity style={{ padding: 10, position: 'absolute', bottom: 0, left: -5 }} onPress={() => handleRemoveItem(item.id)}>
+                                    <MaterialCommunityIcons name="trash-can" size={24} color={Colors.secondary} />
                                 </TouchableOpacity>
                             </View>
                         ))
@@ -199,6 +200,11 @@ const styles = StyleSheet.create({
         color: Colors.textPrimary,
     },
     quantityControls: {
+        backgroundColor: '#fff',
+        elevation:2,
+        borderRadius:20,
+        right:10,
+        padding: 10,
         flexDirection: 'row',
         alignItems: 'center',
     },
