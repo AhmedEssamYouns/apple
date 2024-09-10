@@ -7,9 +7,9 @@ import { Feather } from '@expo/vector-icons';
 const ReviewInput = ({ rating, setRating, review, setReview, handleReview, handleEditReview, handleCancelEditing, editReviewId }) => {
 
   const onSubmitReview = () => {
-    Keyboard.dismiss();
     if (handleReview) {
       handleReview();
+      Keyboard.dismiss();
     }
   };
 
@@ -19,11 +19,10 @@ const ReviewInput = ({ rating, setRating, review, setReview, handleReview, handl
       <View style={styles.reviewInputContainer}>
         <TextInput
           placeholder={editReviewId ? "Update your review" : "Write a review"}
-          fontFamily="SunshineRegular"
+   
           value={review}
           onChangeText={setReview}
           style={styles.textInput}
-          multiline
           numberOfLines={2}
           placeholderTextColor="#B0B0B0"
         />
@@ -60,7 +59,7 @@ const ReviewInput = ({ rating, setRating, review, setReview, handleReview, handl
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.submitReviewButtonEdit}
-                onPress={() => handleEditReview(editReviewId)}
+                onPress={() => {  handleEditReview(editReviewId) ,Keyboard.dismiss() }}
               >
                 <Text style={styles.submitReviewButtonTextEdit}>Update</Text>
               </TouchableOpacity>
@@ -75,7 +74,7 @@ const ReviewInput = ({ rating, setRating, review, setReview, handleReview, handl
           )}
         </View>
       </View>
-    </View>
+    </View >
   );
 };
 
@@ -85,9 +84,9 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   ratingContainer: {
-    position:'absolute',
-    bottom:10,
-    left:10,
+    position: 'absolute',
+    bottom: 10,
+    left: 10,
     flexDirection: 'row',
     justifyContent: 'center',
     marginBottom: 15,
@@ -108,6 +107,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     width: '100%',
+    height: 40,
     fontSize: 16,
     marginBottom: 15,
     paddingHorizontal: 10,

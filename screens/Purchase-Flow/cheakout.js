@@ -4,6 +4,9 @@ import { useNavigation } from '@react-navigation/native';
 import { placeOrder, applyDiscount as applyDiscountCode } from '../../firebase/cheackout';
 import { fetchCartData } from '../../firebase/cart';
 import { getUserData } from '../../firebase/userData';
+import ItemList from '../../components/orders/order-receipt';
+import { Colors } from '../../constants/colors';
+import CustomText from '../../components/elements/Customtext';
 
 const CheckoutPage = () => {
     const [userData, setUserData] = useState(null);
@@ -17,6 +20,7 @@ const CheckoutPage = () => {
     const [cartItems, setCartItems] = useState([]);
     const [total, setTotal] = useState(0);
     const [amount, setAmount] = useState(0);
+    const itemsTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0); // Sum of item prices * quantities
 
     const navigation = useNavigation();
 
@@ -73,7 +77,7 @@ const CheckoutPage = () => {
         try {
             await placeOrder({
                 cartItems,
-                subtotal: total - 20, // Pass the total minus shipping cost
+                subtotal: itemsTotal,
                 shipping: 20,  // Fixed shipping cost
                 total,
                 userData,
@@ -83,7 +87,6 @@ const CheckoutPage = () => {
                 discountApplied,
                 discountCode,
                 amount,
-                products: [], // If you have a way to get products, include them here
                 setLoading,
                 setCartItems,
                 navigation,
@@ -93,27 +96,11 @@ const CheckoutPage = () => {
         }
     };
 
-    const itemElements = cartItems.map((item) => {
-        const discountedPrice = item.quantity > 1 ? item.price * 0.9 : item.price;
-        return (
-            <View style={styles.item} key={item.id}>
-                {item.quantity > 1 && <Text style={styles.note}>10% discount</Text>}
-                <View style={styles.itemContainer}>
-                    <Text style={styles.itemName}>{item.name}</Text>
-                    <Text style={styles.itemQuantity}>quantity: {item.quantity}</Text>
-                </View>
-                <Text style={styles.itemPrice}>
-                    ${(discountedPrice * item.quantity).toFixed(2)}
-                </Text>
-            </View>
-        );
-    });
-
     return (
         <ScrollView style={styles.scrollView}>
             <View style={styles.container}>
-                <Text style={styles.title}>Order Receipt</Text>
-                <View style={styles.itemsContainer}>{itemElements}</View>
+                <CustomText style={styles.title}>Order Receipt</CustomText>
+                <ItemList cartItems={cartItems} />
                 <View style={styles.summaryContainer}>
                     <View style={styles.subtotalContainer}>
                         <Text style={styles.subtotalText}>Subtotal:</Text>
@@ -143,7 +130,7 @@ const CheckoutPage = () => {
                         <Text style={styles.infoTitle}>Your Information</Text>
                         <Text style={styles.infoText}>Address: {address}</Text>
                         <Text style={styles.infoText}>Phone Number: {phone}</Text>
-                        <TouchableOpacity onPress={() => { setConfirmed(false); }}>
+                        <TouchableOpacity style={{ position: 'absolute', bottom: 10, right: 10 }} onPress={() => { setConfirmed(false); }}>
                             <Text style={styles.changeInfoText}>Change</Text>
                         </TouchableOpacity>
                     </View>
@@ -178,7 +165,7 @@ const CheckoutPage = () => {
                         onChangeText={setDiscountCode}
                     />
                     <TouchableOpacity style={styles.applyDiscountButton} onPress={applyDiscount}>
-                        <Text style={styles.applyDiscountButtonText}>Apply Discount</Text>
+                        <Text style={styles.applyDiscountButtonText}>Apply</Text>
                     </TouchableOpacity>
                 </View>
                 {loading ? (
@@ -199,46 +186,19 @@ const CheckoutPage = () => {
 
 const styles = StyleSheet.create({
     scrollView: {
-        backgroundColor: '#F5F8FA',
+        backgroundColor: Colors.background,
     },
     container: {
         padding: 20,
     },
     title: {
+        alignSelf: 'center',
         fontSize: 24,
-        fontWeight: 'bold',
         marginBottom: 10,
     },
-    itemsContainer: {
-        marginBottom: 20,
-    },
-    item: {
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#E1E8ED',
-    },
-    note: {
-        color: '#FF0000',
-        fontSize: 12,
-        marginBottom: 5,
-    },
-    itemContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    itemName: {
-        fontSize: 16,
-    },
-    itemQuantity: {
-        fontSize: 14,
-        color: '#657786',
-    },
-    itemPrice: {
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
+
     summaryContainer: {
-        marginBottom: 20,
+        marginVertical: 20
     },
     subtotalContainer: {
         flexDirection: 'row',
@@ -277,7 +237,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     discountText: {
-        fontSize: 16,
+        alignSelf: 'center',
+        color: Colors.secondary, fontSize: 16,
         marginTop: 10,
     },
     discountCode: {
@@ -293,11 +254,14 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     removeDiscountText: {
-        color: '#1DA1F2',
+        color: Colors.secondary,
         textAlign: 'center',
     },
     confirmationContainer: {
-        marginTop: 20,
+        backgroundColor: 'white',
+        elevation: 2,
+        padding: 10,
+        borderRadius: 10,
     },
     infoTitle: {
         fontSize: 18,
@@ -313,37 +277,51 @@ const styles = StyleSheet.create({
     },
     confirmationInputContainer: {
         marginTop: 20,
+        backgroundColor: Colors.cardBackground,
+        padding: 10,
+        borderRadius: 10,
+        elevation: 4
     },
     infoInput: {
         borderWidth: 1,
+        backgroundColor: 'white',
+        elevation: 1,
         borderColor: '#E1E8ED',
-        borderRadius: 5,
+        borderRadius: 15,
         padding: 10,
         marginBottom: 10,
     },
     confirmButton: {
+        alignSelf: 'flex-end',
         backgroundColor: '#1DA1F2',
-        padding: 15,
+        padding: 8,
         borderRadius: 5,
     },
     confirmButtonText: {
         color: '#FFFFFF',
         textAlign: 'center',
-        fontSize: 16,
+        fontSize: 12,
     },
     discountContainer: {
+        flexDirection: 'row',
         marginTop: 20,
+        backgroundColor: 'white',
+        padding: 10,
+        borderRadius: 10,
+        elevation: 2
     },
     discountCodeInput: {
-        borderWidth: 1,
-        borderColor: '#E1E8ED',
+        backgroundColor: '#E1E8ED',
         borderRadius: 5,
         padding: 10,
-        marginBottom: 10,
+        width: '100%'
     },
     applyDiscountButton: {
+        position: 'absolute',
+        right: 20,
+        alignSelf: 'center',
         backgroundColor: '#1DA1F2',
-        padding: 15,
+        padding: 5,
         borderRadius: 5,
     },
     applyDiscountButtonText: {

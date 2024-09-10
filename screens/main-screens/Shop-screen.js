@@ -60,7 +60,6 @@ const Shop = () => {
                 products={filteredProducts}
                 loading={loading}
                 handleAddToCart={handleAddToCart}
-                handleProductPress={() => null}
             />
         </View>
     );

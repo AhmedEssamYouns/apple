@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { Toast, ALERT_TYPE, Dialog, AlertNotificationRoot } from 'react-native-alert-notification';
-import { db,FIREBASE_AUTH } from '../../firebase/config';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { AlertNotificationRoot } from 'react-native-alert-notification';
+import { submitContactForm } from '../../firebase/email';
+import { ToastAndroid } from 'react-native';
 
 const ContactUsPage = () => {
     const [name, setName] = useState('');
@@ -11,56 +11,10 @@ const ContactUsPage = () => {
     const [message, setMessage] = useState('');
 
     const handleSubmit = () => {
-        if (!name || !subject || !message) {
-            // Show error toast if any field is left empty
-            Toast.show({
-                type: ALERT_TYPE.WARNING,
-                textBody: 'Please fill out all the fields before submiting',
-                autoClose: 2000,
-                titleStyle: {
-                    color: '#657786',
-                },
-                textBodyStyle: {
-                    color: '#657786',
-                },
-
-            });
-            return;
-        }
-
-        addDoc(collection(db, 'contacts'), {
-            name,
-            subject,
-            message,
-            user: FIREBASE_AUTH.currentUser.email,
-            createdAt: serverTimestamp(),
-        })
-            .then(() => {
-                // Show success toast and clear fields
-                Toast.show({
-                    type: ALERT_TYPE.SUCCESS,
-                    textBody: 'message submitted, will reply as soon as possible',
-                    autoClose: 3000,
-                    titleStyle: {
-                        color: '#657786',
-                    },
-                    textBodyStyle: {
-                        color: '#657786',
-                    },
-                });
-                setName('');
-                setSubject('');
-                setMessage('');
-            })
-            .catch((error) => {
-                // Show error toast if database write fails
-                Toast.show({
-                    type: ALERT_TYPE.WARNING,
-                    textBody: 'failed',
-                    autoClose: 2000,
-                });
-                console.error('Error writing document: ', error);
-            });
+        submitContactForm(name, subject, message);
+        setName('');
+        setSubject('');
+        setMessage('');
     };
 
     return (
@@ -73,12 +27,11 @@ const ContactUsPage = () => {
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.input}
-                                placeholder=" Name"
+                                placeholder="Name"
                                 placeholderTextColor="#657786"
                                 selectionColor="#657786"
                                 value={name}
                                 maxLength={20}
-
                                 onChangeText={setName}
                             />
                             <Feather name="user" size={24} color="#657786" style={{ position: 'absolute', right: 10 }} />
@@ -86,7 +39,7 @@ const ContactUsPage = () => {
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.input}
-                                placeholder="phone number"
+                                placeholder="Phone number"
                                 placeholderTextColor="#657786"
                                 selectionColor="#657786"
                                 value={subject}
@@ -94,12 +47,12 @@ const ContactUsPage = () => {
                                 keyboardType='numeric'
                                 onChangeText={setSubject}
                             />
-                           <Feather name="phone" size={24} color="#657786" style={{ position: 'absolute', right: 10 }} />
+                            <Feather name="phone" size={24} color="#657786" style={{ position: 'absolute', right: 10 }} />
                         </View>
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={[styles.input, styles.messageInput]}
-                                placeholder=" Message"
+                                placeholder="Message"
                                 placeholderTextColor="#657786"
                                 selectionColor="#657786"
                                 value={message}
@@ -130,17 +83,16 @@ const ContactUsPage = () => {
                             <Feather name="instagram" size={24} color="#1DA1F2" />
                         </TouchableOpacity>
                     </View>
-
                 </ScrollView>
             </AlertNotificationRoot>
         </View>
     );
 };
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F5F8FA',
-
     },
     formContainer: {
         marginTop: 40,
@@ -169,7 +121,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         paddingLeft: 20,
         paddingVertical: 10,
-
     },
     submitButton: {
         backgroundColor: '#657786',
@@ -177,22 +128,20 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         borderRadius: 10,
         width: '80%',
-        alignSelf: 'center'
-
+        alignSelf: 'center',
     },
     submitButtonText: {
         color: '#FFFFFF',
         fontSize: 20,
         textAlign: 'center',
-        alignSelf: 'center'
-
+        alignSelf: 'center',
     },
     follow: {
         fontSize: 20,
         color: '#657786',
         marginTop: 30,
         marginBottom: 10,
-        alignSelf: 'center'
+        alignSelf: 'center',
     },
     footerContainer: {
         flexDirection: 'row',
@@ -206,7 +155,6 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         width: 50,
         alignSelf: 'center',
-
         height: 50,
         alignItems: 'center',
         justifyContent: 'center',

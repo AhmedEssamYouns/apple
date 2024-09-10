@@ -5,7 +5,7 @@ import { Feather, Ionicons } from '@expo/vector-icons';
 const ReviewItem = ({ review, user, setEditReviewId, setRating, setReview, handleDeleteReview }) => {
   return (
     <View key={review.id} style={styles.reviewItem}>
-      <TouchableOpacity onPress={() => router.navigate({ pathname: 'image', params:{imageUrl: encodeURIComponent(review.photoUrl)}})}>
+      <TouchableOpacity onPress={() => router.navigate({ pathname: 'image', params: { imageUrl: encodeURIComponent(review.photoUrl) } })}>
         <Image
           source={{ uri: review.photoUrl }}
           style={styles.reviewAvatar}
@@ -73,8 +73,8 @@ const styles = StyleSheet.create({
   reviewItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 10,
     borderBottomWidth: 0.4,
+    paddingTop: 20,
     borderColor: '#657786',
   },
   reviewAvatar: {

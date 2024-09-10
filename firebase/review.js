@@ -117,3 +117,21 @@ export function fetchReviews(productId, setReviews) {
 
     return unsubscribe;
 }
+
+
+
+export const fetchAllReviews = (setReviews, setLoading) => {
+    const reviewsCollectionRef = collection(db, 'reviews');
+    const unsubscribe = onSnapshot(reviewsCollectionRef, (querySnapshot) => {
+        const reviewsData = [];
+        querySnapshot.forEach((doc) => {
+            const reviewData = doc.data();
+            reviewData.id = doc.id; // add the document ID to the review object
+            reviewsData.push(reviewData);
+        });
+        setReviews(reviewsData);
+        setLoading(false);
+    });
+
+    return unsubscribe;
+};

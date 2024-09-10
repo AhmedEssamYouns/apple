@@ -1,5 +1,5 @@
 // orderBackend.js
-import { collection, query, where, onSnapshot, getDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot,orderBy, getDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { db,FIREBASE_AUTH } from './config';
 import { ToastAndroid } from 'react-native';
 
@@ -30,7 +30,7 @@ export const getOrders = (setOrders, setLoading) => {
   }
 };
 
-export const deleteOrder = async (orderId, paymentMethod, setOrders, orders, setLoading2) => {
+export const deleteOrderforUser = async (orderId, paymentMethod, setOrders, orders, setLoading2) => {
   try {
     let refundMessage = '';
 
@@ -80,4 +80,67 @@ export const deleteOrder = async (orderId, paymentMethod, setOrders, orders, set
   } finally {
     setLoading2(false);
   }
+};
+
+
+export const fetchOrders = (setOrders, setLoading) => {
+    const ordersRef = collection(db, 'orders');
+    const q = query(ordersRef, orderBy('timestamp', 'desc'));
+    return onSnapshot(q, (querySnapshot) => {
+        const ordersData = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setOrders(ordersData);
+        setLoading(false);
+    });
+};
+
+export const deleteOrder = async (orderId, setOrders, orders) => {
+    const orderRef = doc(db, 'orders', orderId);
+    await deleteDoc(orderRef);
+    alert(`Order ID: (${orderId}) deleted`);
+    setOrders(orders.filter((order) => order.id !== orderId));
+};
+
+export const updateOrderReadyStatus = async (orderId, currentIsReady, currentDone) => {
+    const orderRef = doc(db, 'orders', orderId);
+    if (currentDone === 'yes') {
+        alert('Cannot set Ready if order is already done.');
+        return;
+    }
+    await updateDoc(orderRef, {
+        isReady: currentIsReady === 'no' ? 'yes' : 'no',
+    });
+};
+
+export const updateOrderDoneStatus = async (orderId, currentIsReady, currentDone) => {
+    const orderRef = doc(db, 'orders', orderId);
+    if (currentDone === 'no') {
+        await updateDoc(orderRef, { done: 'yes', isReady: 'yes' });
+    } else if (currentIsReady === 'no') {
+        await updateDoc(orderRef, { done: 'no' });
+    } else {
+        await updateDoc(orderRef, { done: 'no', isReady: 'yes' });
+    }
+};
+
+export const cancelOrder = async (orderId, orders, setOrders) => {
+    const orderRef = doc(db, 'orders', orderId);
+    const orderDoc = await getDoc(orderRef);
+    if (orderDoc.exists()) {
+        const orderData = orderDoc.data();
+        const orderItems = orderData.items;
+        await Promise.all(
+            orderItems.map(async (item) => {
+                const productRef = doc(db, 'products', item.id);
+                const productDoc = await getDoc(productRef);
+                if (productDoc.exists()) {
+                    const productData = productDoc.data();
+                    const newQuantity = productData.quantity + item.quantity;
+                    await updateDoc(productRef, { quantity: newQuantity });
+                }
+            })
+        );
+        await deleteDoc(orderRef);
+        setOrders(orders.filter((order) => order.id !== orderId));
+        alert(`Order ID: (${orderId}) canceled`);
+    }
 };

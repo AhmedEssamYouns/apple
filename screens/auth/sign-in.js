@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import { handleSignIn } from "../../firebase/auth";
 import { Colors } from "../../constants/colors";
 import CustomText from "../../components/elements/Customtext";
@@ -17,9 +17,19 @@ const SignInScreen = () => {
     };
 
     const handleSignInPress = () => {
-        handleSignIn(email, password, navigation);
+        if (email === "admin" && password === "admin") {
+            // Navigate to AdminPage
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: 'admin' }],
+                })
+            );
+        } else {
+            // Use your existing sign-in logic
+            handleSignIn(email, password, navigation);
+        }
     };
-
     return (
             <View style={styles.container}>
                 <View style={styles.welcomeContainer}>
@@ -60,7 +70,7 @@ const SignInScreen = () => {
                 <Text style={styles.signUpLink} onPress={handleSignUp}>
                     Don't have an account?<Text style={{ color: "grey" }}> Sign Up</Text>!
                 </Text>
-                <Text style={styles.signUpLink} onPress={() => navigation.navigate('forgot')}>
+                <Text style={styles.signUpLink} onPress={() => navigation.navigate('Forgot Password')}>
                     Forgot <Text style={{ color: "grey" }}>Password?</Text>
                 </Text>
                 <View>

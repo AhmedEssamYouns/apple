@@ -2,16 +2,90 @@
 import { Alert, ToastAndroid } from "react-native";
 import {
     createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile,
-    sendEmailVerification, sendPasswordResetEmail, updatePassword
+    sendEmailVerification, sendPasswordResetEmail, updatePassword,
+    reauthenticateWithCredential, EmailAuthProvider
 } from "firebase/auth";
-import { FIREBASE_AUTH } from "./config";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CommonActions, useNavigation } from "@react-navigation/native";
+import { FIREBASE_AUTH, db } from "./config";
+import { CommonActions } from "@react-navigation/native";
+import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
 
 
+export const checkUsernameAvailability = async (username) => {
+    try {
+        const usernameSnapshot = await getDocs(collection(db, 'users'));
+        const existingUsernames = usernameSnapshot.docs.map((doc) => doc.data().name);
+
+        if (existingUsernames.includes(username)) {
+            let suggestionNumber = 2;
+            let newUsername = `${username}${suggestionNumber}`;
+
+            while (existingUsernames.includes(newUsername)) {
+                suggestionNumber++;
+                newUsername = `${username}${suggestionNumber}`;
+            }
+
+            return { available: false, suggestion: newUsername };
+        }
+        return { available: true };
+    } catch (error) {
+        console.error('Error checking username availability:', error);
+        throw error;
+    }
+};
+export const signUpUser = async (email, password, name, username) => {
+    try {
+        const userCredential = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
+        await updateProfile(userCredential.user, {
+            displayName: name,
+            photoURL: 'https://th.bing.com/th/id/R.222d79e7bde6db5bb2a2ce526504ddac?rik=mBNCmkbm1VHRfg&pid=ImgRaw&r=0',
+        });
+
+        await sendEmailVerification(userCredential.user);
+
+        await setDoc(doc(db, 'users', email), {
+            name: username,
+            email: email,
+            fullname: name,
+            password: password,
+            Address: 'none',
+            Phone: 'none',
+            balance: 0
+        });
+
+        return { success: true };
+    } catch (error) {
+        return { success: false, error }; // Return error object
+    }
+};
 
 
+export const ChangePassword = async (currentPassword, newPassword) => {
+    const user = FIREBASE_AUTH.currentUser;
 
+    if (user) {
+        try {
+            // Reauthenticate user
+            const credential = EmailAuthProvider.credential(user.email, currentPassword);
+            await reauthenticateWithCredential(user, credential);
+
+            // Update password
+            await updatePassword(user, newPassword);
+            return { success: true, message: 'Password updated successfully!' };
+        } catch (error) {
+            console.error(error);
+            const errorCode = error.code;
+            let errorMessage = '';
+            if (errorCode === 'auth/wrong-password') {
+                errorMessage = 'Current password is incorrect.';
+            } else {
+                errorMessage = 'Error updating password.';
+            }
+            return { success: false, message: errorMessage };
+        }
+    } else {
+        return { success: false, message: 'No user is signed in.' };
+    }
+};
 // Sign in user and change password
 export const UpdatePassword = async (email, currentPassword, newPassword) => {
     try {
@@ -101,20 +175,14 @@ export const handleSignIn = async (email, password, navigation) => {
 
 
 
-export const handleSignUp = async (email, password, name, username, navigation) => {
+export const handleSignUp = async (email, password, name, navigation) => {
     try {
         const userCredential = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
         await updateProfile(userCredential.user, { displayName: name });
+        navigation.navigate('signIN')
         await sendEmailVerification(userCredential.user);
 
-        // Save additional user data to Firestore
-        // (Assuming you have a `db` object for Firestore)
 
-        Alert.alert('Email verification sent! Verify to sign in', '', [
-            {
-                text: 'OK', onPress: () => navigation.navigate('signIN')
-            }
-        ]);
     } catch (error) {
         console.error('Error creating user:', error);
         if (error.code === 'auth/email-already-in-use') {
@@ -126,6 +194,7 @@ export const handleSignUp = async (email, password, name, username, navigation) 
         }
     }
 };
+
 
 
 
@@ -146,11 +215,10 @@ export const resetPassword = async (email) => {
     }
 };
 
-
 export const handleLogout = async (navigation) => {
     try {
         await FIREBASE_AUTH.signOut();
-        
+
         // Reset the navigation state to navigate to 'signIN'
         navigation.dispatch(
             CommonActions.reset({

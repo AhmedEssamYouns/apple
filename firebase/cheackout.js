@@ -4,6 +4,21 @@ import { collection, addDoc, updateDoc, doc, query, where, getDocs } from 'fireb
 import { FIREBASE_AUTH, db } from './config';
 import { ToastAndroid } from 'react-native';
 
+const Products = async () => {
+  try {
+    const productsRef = collection(db, 'products');
+    const productsSnapshot = await getDocs(productsRef);
+    const productsData = productsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    return productsData;
+  } catch (error) {
+    console.error('Error getting products from Firestore: ', error);
+    throw error;
+  }
+};
+
 export const placeOrder = async ({
   cartItems,
   subtotal ,
@@ -17,14 +32,13 @@ export const placeOrder = async ({
   discountCode = '',
   amount = 0, // Default to 0 if not provided
   subtotal2 = 0, // Default to 0 if not provided
-  products = [], // Default to empty array if not provided
   setLoading,
   setCartItems,
   navigation,
 }) => {
   try {
     setLoading(true);
-
+    const products = await Products();
     const currentUser = FIREBASE_AUTH.currentUser;
 
     if (currentUser) {

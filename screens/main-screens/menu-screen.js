@@ -20,49 +20,47 @@ const MenuHome = () => {
     };
 
     return (
-        <ScrollView>
-            <View style={styles.container}>
-                <View style={styles.userInfo}>
-                    <Text style={styles.bestSellingTitle}>Account</Text>
+        <ScrollView style={styles.container}>
+            <View style={styles.userInfo}>
+                <Text style={styles.bestSellingTitle}>Account</Text>
 
-                    <TouchableOpacity style={styles.userInfoRow} onPress={() =>
-                        navigation.navigate('orders') 
-                    }>
-                        <Text style={styles.label}>Orders</Text>
-                        <Text style={styles.info}>Your Orders</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.userInfoRow} onPress={() => navigation.navigate('Favorite')}>
-                        <Text style={styles.label}>Favorite</Text>
-                        <Text style={styles.info}>Favorite products</Text>
-                    </TouchableOpacity>
+                <TouchableOpacity style={styles.userInfoRow} onPress={() =>
+                    navigation.navigate('orders')
+                }>
+                    <Text style={styles.label}>Orders</Text>
+                    <Text style={styles.info}>Your Orders</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.userInfoRow} onPress={() => navigation.navigate('fav')}>
+                    <Text style={styles.label}>Favorite</Text>
+                    <Text style={styles.info}>Favorite products</Text>
+                </TouchableOpacity>
 
-                    <Text style={styles.bestSellingTitle}>Personal info</Text>
-                    <TouchableOpacity style={styles.userInfoRow} onPress={() => navigation.navigate('forgot')} >
-                        <Text style={styles.label}>Verify</Text>
-                        <Text style={styles.info}>Forgot password</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.userInfoRow} onPress={() => navigation.navigate('change')}>
-                        <Text style={styles.label}>Password</Text>
-                        <Text style={styles.info}>Change password</Text>
-                    </TouchableOpacity>
-                    <Text style={styles.bestSellingTitle}>Connect</Text>
-                    <TouchableOpacity style={styles.userInfoRow} onPress={() => Linking.openURL('https://portfolio-63e50.web.app/')}>
-                        <Text style={styles.label}>About us</Text>
-                        <Text style={styles.info}>Articles</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.userInfoRow} onPress={handleLinkPress}>
-                        <Text style={styles.label}>Website</Text>
-                        <Text style={styles.info}>Our website</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.userInfoRow} onPress={handleContact}>
-                        <Text style={styles.label}>Help?</Text>
-                        <Text style={styles.info}>Contact us</Text>
-                    </TouchableOpacity>
+                <Text style={styles.bestSellingTitle}>Personal info</Text>
+                <TouchableOpacity style={styles.userInfoRow} onPress={() => navigation.navigate('Forgot Password')} >
+                    <Text style={styles.label}>Verify</Text>
+                    <Text style={styles.info}>Forgot password</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.userInfoRow} onPress={() => navigation.navigate('change password')}>
+                    <Text style={styles.label}>Password</Text>
+                    <Text style={styles.info}>Change password</Text>
+                </TouchableOpacity>
+                <Text style={styles.bestSellingTitle}>Connect</Text>
+                <TouchableOpacity style={styles.userInfoRow} onPress={() => Linking.openURL('https://portfolio-63e50.web.app/')}>
+                    <Text style={styles.label}>About us</Text>
+                    <Text style={styles.info}>Articles</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.userInfoRow} onPress={handleLinkPress}>
+                    <Text style={styles.label}>Website</Text>
+                    <Text style={styles.info}>Our website</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.userInfoRow} onPress={handleContact}>
+                    <Text style={styles.label}>Help?</Text>
+                    <Text style={styles.info}>Contact us</Text>
+                </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.logButton} onPress={handleLogoutPress} >
-                        <Text style={styles.logButtonText}>Logout</Text>
-                    </TouchableOpacity>
-                </View>
+                <TouchableOpacity style={styles.logButton} onPress={handleLogoutPress} >
+                    <Text style={styles.logButtonText}>Logout</Text>
+                </TouchableOpacity>
             </View>
         </ScrollView>
     );
@@ -72,7 +70,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.background,
-        padding: 20
+        paddingHorizontal: 20,
     },
     userInfo: {
         borderRadius: 20,
@@ -127,7 +125,7 @@ const styles = StyleSheet.create({
     logButtonText: {
         color: '#657786',
         fontSize: 16,
-        alignSelf: 'center'
+        alignSelf: 'center',
     },
 });
 

@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     profileImage: {
+        alignSelf:'center',
         width: 85,
         height: 85,
         borderRadius: 40,

@@ -4,7 +4,7 @@ import ReviewItem from './Review-item';
 import { Colors } from '../../constants/colors';
 import CustomText from '../elements/Customtext';
 
-const ReviewList = ({ reviews, user, setEditReviewId, setRating, setReview, handleDeleteReview }) => {
+const ReviewList = ({ reviews, user, setEditReviewId, setRating, setReview, handleDeleteReview, header }) => {
   const renderItem = ({ item }) => (
     <ReviewItem
       review={item}
@@ -18,12 +18,11 @@ const ReviewList = ({ reviews, user, setEditReviewId, setRating, setReview, hand
 
   return (
     <FlatList
+      ListHeaderComponent={header}
       data={reviews}
       renderItem={renderItem}
       ListEmptyComponent={
-        <View style={{ justifyContent: 'center', marginTop: '30%' }}>
-          <CustomText style={{ fontSize: 30, alignSelf: 'center', color: Colors.secondary }}>No Reviews yet</CustomText>
-        </View>
+        <CustomText style={{ fontSize: 30, alignSelf: 'center', color: Colors.secondary }}>No Reviews yet</CustomText>
       }
       keyExtractor={(item) => item.id.toString()}
       contentContainerStyle={styles.container}
@@ -33,10 +32,11 @@ const ReviewList = ({ reviews, user, setEditReviewId, setRating, setReview, hand
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: Colors.cardBackground,
     paddingHorizontal: 10,
-    paddingTop: 10,
-    paddingBottom:110,
-    borderRadius: 10,
+    elevation: 4,
+    margin:10,
+    borderColor: Colors.textPrimary,
   },
 });
 

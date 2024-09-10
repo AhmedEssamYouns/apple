@@ -3,13 +3,11 @@ import { View, ActivityIndicator, FlatList, Text, StyleSheet } from 'react-nativ
 import ProductItem from './product-item';
 import { Colors } from '../../constants/colors';
 
-const ProductList = ({ handleProductPress, handleAddToCart, header, products, loading }) => {
+const ProductList = ({ header, products, loading }) => {
 
     const renderProductItem = ({ item }) => (
         <ProductItem
             product={item}
-            handleProductPress={handleProductPress}
-            handleAddToCart={handleAddToCart}
         />
     );
 
@@ -35,6 +33,7 @@ const ProductList = ({ handleProductPress, handleAddToCart, header, products, lo
                 numColumns={2}
                 columnWrapperStyle={styles.columnWrapper}
                 ListHeaderComponent={header}
+                stickyHeaderHiddenOnScroll={header}
                 ListFooterComponent={renderFooter}
                 ListEmptyComponent={renderEmptyComponent} 
                 showsVerticalScrollIndicator={false}

@@ -1,57 +1,65 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Pressable } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Colors } from '../../constants/colors'; // Import colors
+import { addToFavorites, removeFromFavorites, useIsInFavorites } from '../../firebase/products';
+import { handleAddToCart } from '../../firebase/cart';
+import { useNavigation } from '@react-navigation/native';
+const ProductItem = ({ product }) => {
+    const isFavorite = useIsInFavorites(product.id);
+    const navigation = useNavigation();
 
-const ProductItem = ({ product, handleProductPress, handleAddToCart }) => {
+    const handleFavPress = async () => {
+        if (isFavorite) {
+            await removeFromFavorites(product.id);
+        } else {
+            await addToFavorites(product);
+        }
+    };
+
+    const handleProductPress = (product) => {
+        // Handle product press, e.g., navigate to product details
+        navigation.navigate('Product', { product: product });
+    };
+
     return (
-        <>
+        <Pressable key={product.id} style={styles.productCard} onPress={() => handleProductPress(product)}>
+            <Image style={styles.productImageContainer} source={{ uri: product.image ? product.image : product.images[0] }} />
+
+            {product.offer ? (
+                <>
+                    <Text style={styles.oldPrice}>${product.price}</Text>
+                    <Text style={styles.productPrice2}>${product.offer}</Text>
+                </>
+            ) : (
+                <Text style={styles.productPrice}>${product.price}</Text>
+            )}
+
+            <View style={styles.productDetails}>
+                <Text style={styles.productName}>{product.name}</Text>
+            </View>
             {product.quantity > 0 ? (
-                <View key={product.id} style={styles.productCard}>
-                    <Image style={styles.productImageContainer} source={{ uri: product.image ? product.image : product.images[0] }} />
 
-                    {product.offer ? (
-                        <>
-                            <Text style={styles.oldPrice}>${product.price}</Text>
-                            <Text style={styles.productPrice2}>${product.offer}</Text>
-                        </>
-                    ) : (
-                        <Text style={styles.productPrice}>${product.price}</Text>
-                    )}
-
-                    <View style={styles.productDetails}>
-                        <Text style={styles.productName}>{product.name}</Text>
-                    </View>
-                    <View style={styles.addToCartButtonContainer}>
-                        <TouchableOpacity style={styles.iconButton} onPress={() => handleProductPress(product)}>
-                            <FontAwesome name="info-circle" size={24} color={Colors.secondary} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[styles.iconButton, styles.addButton]} onPress={() => handleAddToCart(product)}>
-                            <FontAwesome name="cart-plus" size={24} color={Colors.secondary} />
-                        </TouchableOpacity>
-                    </View>
+                <View style={styles.addToCartButtonContainer}>
+                    <TouchableOpacity style={styles.iconButton} onPress={handleFavPress}>
+                        {isFavorite ?
+                            <FontAwesome name="heart" size={24} color={Colors.secondary} />
+                            :
+                            <FontAwesome name="heart-o" size={24} color={Colors.secondary} />
+                        }
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.iconButton, styles.addButton]} onPress={() => handleAddToCart(product)}>
+                        <FontAwesome name="cart-plus" size={24} color={Colors.secondary} />
+                    </TouchableOpacity>
                 </View>
             ) : (
-                <View key={product.id} style={styles.productCard}>
-                    <Image style={styles.productImageContainer} source={{ uri: product.image }} />
-                    {product.offer ? (
-                        <>
-                            <Text style={styles.oldPrice}>${product.price}</Text>
-                            <Text style={styles.productPrice2}>${product.offer}</Text>
-                        </>
-                    ) : (
-                        <Text style={styles.productPrice}>${product.price}</Text>
-                    )}
 
-                    <View style={styles.productDetails}>
-                        <Text style={styles.productName}>{product.name}</Text>
-                    </View>
-                    <View style={styles.outOfStockContainer}>
-                        <Text style={styles.outOfStockText}>Out of stock!</Text>
-                    </View>
+                <View style={styles.outOfStockContainer}>
+                    <Text style={styles.outOfStockText}>Out of stock!</Text>
                 </View>
-            )}
-        </>
+            )
+            }
+        </Pressable >
     );
 };
 

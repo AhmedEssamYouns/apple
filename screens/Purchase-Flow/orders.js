@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator, Alert } from 'react-native';
-import { getOrders, deleteOrder } from '../../firebase/mange-orders'
+import { getOrders, deleteOrder, deleteOrderforUser } from '../../firebase/mange-orders'
 import OrdersList from '../../components/orders/order-list';
 import { Colors } from '../../constants/colors';
 
@@ -25,7 +25,7 @@ const OrderPage = () => {
                     text: 'Yes',
                     onPress: () => {
                         setLoading2(true);
-                        deleteOrder(orderId, paymentMethod, setOrders, orders, setLoading2);
+                        deleteOrderforUser(orderId, paymentMethod, setOrders, orders, setLoading2);
                     },
                     style: 'destructive',
                 },

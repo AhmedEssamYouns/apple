@@ -3,6 +3,9 @@ import { collection, doc, getDoc, onSnapshot, updateDoc, setDoc, } from 'firebas
 import { db, FIREBASE_AUTH } from './config';
 import Toast, { ALERT_TYPE } from 'react-native-alert-notification';
 import { ToastAndroid } from 'react-native';
+import { Alert } from 'react-native';
+
+
 
 export async function handleAddToCart(product) {
     const currentUser = FIREBASE_AUTH.currentUser;
@@ -77,9 +80,6 @@ export const getProductsForCart = (setProducts, setCartItems) => {
                         return true;
                     });
 
-                    if (removedItems.length > 0) {
-                        Alert.alert(`Items '${removedItems.join(", ")}' removed due to being out of stock.`);
-                    }
 
                     // Update the cart items in real-time
                     setCartItems(updatedCartItems);

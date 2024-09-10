@@ -1,12 +1,11 @@
 import { FIREBASE_AUTH, db, storage } from './config';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { updateProfile } from 'firebase/auth';
-import { updateDoc, doc, getDoc, onSnapshot } from "firebase/firestore";
+import { updateDoc, doc, getDoc, onSnapshot,collection } from "firebase/firestore";
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
-import { useNavigation } from '@react-navigation/native';
 import { ToastAndroid } from 'react-native';
-
+import { Alert } from 'react-native';
 export const fetchUserData = (setUserData, setIsLoading) => {
     const userDocRef = doc(db, "users", FIREBASE_AUTH.currentUser.email);
     const unsub = onSnapshot(userDocRef, (docSnap) => {
@@ -129,3 +128,24 @@ export const handleSave = async (Name, Address, Phone, image, setIsLoading, setU
 
 };
 
+export const handleUpdateUser = async (email, field, newValue) => {
+    try {
+        const userRef = doc(db, "users", email);
+        await updateDoc(userRef, { [field]: newValue });
+        Alert.alert("Success", `${field} updated successfully`);
+    } catch (error) {
+        Alert.alert("Error", error.message);
+    }
+};
+
+export const subscribeToUsers = (setUsersData, setLoading) => {
+    const unsubscribe = onSnapshot(collection(db, 'users'), (snapshot) => {
+        const userData = [];
+        snapshot.forEach((doc) => {
+            userData.push(doc.data());
+        });
+        setUsersData(userData);
+        setLoading(false); // Set loading to false when data is loaded
+    });
+    return unsubscribe;
+};
