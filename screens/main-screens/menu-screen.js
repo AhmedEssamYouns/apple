@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView, Alert } 
 import { useNavigation } from '@react-navigation/native';
 import { handleLogout } from '../../firebase/auth';
 import { Colors } from '../../constants/colors';
+import CustomText from '../../components/elements/Customtext';
 
 const MenuHome = () => {
     const navigation = useNavigation();
@@ -22,7 +23,7 @@ const MenuHome = () => {
     return (
         <ScrollView style={styles.container}>
             <View style={styles.userInfo}>
-                <Text style={styles.bestSellingTitle}>Account</Text>
+                <CustomText style={styles.bestSellingTitle}>Account</CustomText>
 
                 <TouchableOpacity style={styles.userInfoRow} onPress={() =>
                     navigation.navigate('orders')
@@ -35,7 +36,7 @@ const MenuHome = () => {
                     <Text style={styles.info}>Favorite products</Text>
                 </TouchableOpacity>
 
-                <Text style={styles.bestSellingTitle}>Personal info</Text>
+                <CustomText style={styles.bestSellingTitle}>Personal info</CustomText>
                 <TouchableOpacity style={styles.userInfoRow} onPress={() => navigation.navigate('Forgot Password')} >
                     <Text style={styles.label}>Verify</Text>
                     <Text style={styles.info}>Forgot password</Text>
@@ -44,7 +45,7 @@ const MenuHome = () => {
                     <Text style={styles.label}>Password</Text>
                     <Text style={styles.info}>Change password</Text>
                 </TouchableOpacity>
-                <Text style={styles.bestSellingTitle}>Connect</Text>
+                <CustomText style={styles.bestSellingTitle}>Connect</CustomText>
                 <TouchableOpacity style={styles.userInfoRow} onPress={() => Linking.openURL('https://portfolio-63e50.web.app/')}>
                     <Text style={styles.label}>About us</Text>
                     <Text style={styles.info}>Articles</Text>
