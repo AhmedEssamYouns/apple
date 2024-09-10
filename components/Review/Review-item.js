@@ -1,11 +1,15 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Feather, Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const ReviewItem = ({ review, user, setEditReviewId, setRating, setReview, handleDeleteReview }) => {
+  const navigation = useNavigation()
   return (
     <View key={review.id} style={styles.reviewItem}>
-      <TouchableOpacity onPress={() => router.navigate({ pathname: 'image', params: { imageUrl: encodeURIComponent(review.photoUrl) } })}>
+      <TouchableOpacity onPress={() => navigation.navigate('ImageScreen', {
+        imageUri: review.photoUrl
+      })}>
         <Image
           source={{ uri: review.photoUrl }}
           style={styles.reviewAvatar}
