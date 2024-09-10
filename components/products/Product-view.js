@@ -34,8 +34,8 @@ const ProductView = ({ product, navigation, addToFavorites, handleAddToCart, ave
                         <Text style={styles.productPrice}>${product.price}</Text>
                     )}
                     <Text style={styles.productDescription}>{product.disc}</Text>
-                    {product.quantity === 2 && <Text style={styles.productPrice}>Only two left in stock!</Text>}
-                    {product.quantity === 1 && <Text style={styles.productPrice}>Only one left in stock!</Text>}
+                    {product.quantity == 2 && <CustomText style={styles.stock}>Only two left in stock!</CustomText>}
+                    {product.quantity == 1 && <CustomText style={styles.stock}>Only one left in stock!</CustomText>}
                     {product.quantity != 0 ?
                         <TouchableOpacity style={styles.addToCartButton} onPress={() => handleAddToCart(product)}>
                             <Text style={styles.addToCartButtonText}>Add to Cart</Text>
@@ -98,6 +98,11 @@ const styles = StyleSheet.create({
         right: 10,
     },
     productPrice: {
+        fontSize: 18,
+        color: '#1DA1F2',
+    },
+    stock: {
+        padding:10,
         fontSize: 18,
         color: '#1DA1F2',
     },

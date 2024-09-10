@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, TextInput, TouchableOpacity, Text, StyleSheet, Keyboard } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, StyleSheet, Keyboard, KeyboardAvoidingView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../constants/colors';
 import { Feather } from '@expo/vector-icons';
 
 const ReviewInput = ({ rating, setRating, review, setReview, handleReview, handleEditReview, handleCancelEditing, editReviewId }) => {
@@ -13,13 +12,13 @@ const ReviewInput = ({ rating, setRating, review, setReview, handleReview, handl
     }
   };
 
+  const isSubmitDisabled = rating === 0 || review.trim() === '';
+
   return (
     <View style={styles.reviewForm}>
-
-      <View style={styles.reviewInputContainer}>
+      <KeyboardAvoidingView style={styles.reviewInputContainer}>
         <TextInput
           placeholder={editReviewId ? "Update your review" : "Write a review"}
-   
           value={review}
           onChangeText={setReview}
           style={styles.textInput}
@@ -58,28 +57,31 @@ const ReviewInput = ({ rating, setRating, review, setReview, handleReview, handl
                 />
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.submitReviewButtonEdit}
-                onPress={() => {  handleEditReview(editReviewId) ,Keyboard.dismiss() }}
+                style={[styles.submitReviewButtonEdit, isSubmitDisabled && styles.disabledButton]}
+                onPress={() => { handleEditReview(editReviewId), Keyboard.dismiss() }}
+                disabled={isSubmitDisabled}
               >
                 <Text style={styles.submitReviewButtonTextEdit}>Update</Text>
               </TouchableOpacity>
             </>
           ) : (
             <TouchableOpacity
-              style={styles.submitReviewButton}
+              style={[styles.submitReviewButton, isSubmitDisabled && styles.disabledButton]}
               onPress={onSubmitReview}
+              disabled={isSubmitDisabled}
             >
               <Text style={styles.submitReviewButtonText}>Submit</Text>
             </TouchableOpacity>
           )}
         </View>
-      </View>
-    </View >
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   reviewForm: {
+    zIndex:2,
     borderRadius: 10,
     elevation: 4,
   },
@@ -150,6 +152,9 @@ const styles = StyleSheet.create({
   cancelButton: {
     padding: 5,
     marginRight: 10,
+  },
+  disabledButton: {
+    backgroundColor: '#B0B0B0', // Change button color when disabled
   },
 });
 

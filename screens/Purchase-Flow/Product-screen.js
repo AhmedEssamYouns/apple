@@ -9,7 +9,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { Colors } from '../../constants/colors';
 import ProductView from '../../components/products/Product-view';
 import { addToFavorites } from '../../firebase/products';
-
+import { fetchOrders } from '../../firebase/mange-orders'
 const ProductScreen = () => {
     const route = useRoute();
     const { product } = route.params || {};
@@ -22,6 +22,12 @@ const ProductScreen = () => {
     const [review, setReview] = useState('');
     const [averageRating, setAverageRating] = useState(0);
     const [hasSubmittedReview, setHasSubmittedReview] = useState(false);
+    const [orders, setOrders] = useState([])
+
+    useEffect(() => {
+        const unsubscribe = fetchOrders(setOrders, setLoading);
+        return unsubscribe;
+    }, []);
 
     useEffect(() => {
         const unsubscribe = fetchReviews(productId, (newReviews) => {
@@ -49,7 +55,7 @@ const ProductScreen = () => {
 
     const handleReview = async () => {
         try {
-            await submitReview(product, review, rating, user, reviews, setHasSubmittedReview);
+            await submitReview(product, review, rating, user, reviews,orders, setHasSubmittedReview);
             setReview('');
             setRating(0);
         } catch (error) {
@@ -84,7 +90,7 @@ const ProductScreen = () => {
             <ProductView
                 product={product}
                 navigation={navigation}
-                addToFavorites={() => {addToFavorites(product)}}
+                addToFavorites={() => { addToFavorites(product) }}
                 handleAddToCart={handleAddToCart}
                 averageRating={averageRating}
             />

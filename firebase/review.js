@@ -1,8 +1,7 @@
 import { collection, doc, deleteDoc, updateDoc, addDoc, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "./config";
 import { Toast, ALERT_TYPE, Dialog, AlertNotificationRoot } from 'react-native-alert-notification';
-import { ToastAndroid } from "react-native";
-
+import { Alert, ToastAndroid } from "react-native";
 
 export async function deleteReview(reviewId) {
     try {
@@ -20,7 +19,7 @@ export async function deleteReview(reviewId) {
         });
     } catch (error) {
         console.error("Error deleting review: ", error);
-        ToastAndroid.show( "Error deleting review, please try again later", ToastAndroid.SHORT);
+        ToastAndroid.show("Error deleting review, please try again later", ToastAndroid.SHORT);
 
     }
 }
@@ -42,7 +41,7 @@ export async function editReview(reviewId, rating, review, reviews, setEditRevie
 
         setEditReviewId(null);
 
-        ToastAndroid.show( "Review updated", ToastAndroid.SHORT);
+        ToastAndroid.show("Review updated", ToastAndroid.SHORT);
 
     } catch (error) {
         console.error("Error updating review: ", error);
@@ -60,7 +59,27 @@ export async function editReview(reviewId, rating, review, reviews, setEditRevie
     }
 }
 
-export async function submitReview(product, review, rating, user, reviews, setHasSubmittedReview) {
+export async function submitReview(product, review, rating, user, reviews,orders, setHasSubmittedReview) {
+
+    const userHasReviewed = reviews.some((review) =>
+        review.productId === product.id && review.pass === user.email
+    );
+    const hasPurchasedProduct = orders.some((order) =>
+        order.items.some(
+            (item) => item.id == product.id && order.done == 'yes'
+        )
+    )
+    if (!hasPurchasedProduct) {
+        ToastAndroid.show("You have to purchase and receive the product first.", ToastAndroid.SHORT);
+        return;
+    }
+
+    if (userHasReviewed) {
+        ToastAndroid.show("You have already submitted a review for this product.", ToastAndroid.SHORT);
+        return;
+    }
+
+
     if (!review || !rating) {
         ToastAndroid.show("Please enter a rating and a review.", ToastAndroid.SHORT);
 
@@ -80,7 +99,7 @@ export async function submitReview(product, review, rating, user, reviews, setHa
             edit: ''
         });
 
-  
+
         ToastAndroid.show("Review submitted", ToastAndroid.SHORT);
 
 
