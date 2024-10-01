@@ -130,6 +130,7 @@ const Filter = ({
                         <TextInput
                             style={styles.customPriceInput}
                             placeholder="Max"
+                            keyboardType='number-pad'
                             value={customUpperBound}
                             onChangeText={(text) => setCustomUpperBound(text)}
                         />

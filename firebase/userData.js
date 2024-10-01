@@ -53,23 +53,27 @@ export const handleChooseImage = async (setImage) => {
     }
 };
 
-export const getLocation = async (setAddress) => {
+export const getLocation = async (setAddress, setLoading2) => {
+    setLoading2(true); // Show loading spinner
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
         console.log('Permission to access location was denied');
+        setLoading2(false); // Hide loading spinner
         return;
     }
 
-    let location = await Location.getCurrentPositionAsync({});
-    let latitude = location.coords.latitude;
-    let longitude = location.coords.longitude;
+    try {
+        let location = await Location.getCurrentPositionAsync({});
+        let latitude = location.coords.latitude;
+        let longitude = location.coords.longitude;
 
-    let geocode = await Location.reverseGeocodeAsync({
-        latitude,
-        longitude
-    });
-
-    setAddress(geocode[0].city + ', ' + geocode[0].region);
+        let geocode = await Location.reverseGeocodeAsync({ latitude, longitude });
+        setAddress(`${geocode[0].city}, ${geocode[0].region}`);
+    } catch (error) {
+        console.error(error);
+    } finally {
+        setLoading2(false); // Hide loading spinner
+    }
 };
 
 export const handleSave = async (Name, Address, Phone, image, setIsLoading, setUserData, router) => {

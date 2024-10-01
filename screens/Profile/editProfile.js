@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity, ScrollView, Image, TextInput, Alert } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity, ScrollView, Image, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
+import { AlertNotificationRoot } from 'react-native-alert-notification';
 import { Colors } from '../../constants/colors';
-import { handleChooseImage, getLocation, handleSave, getUserData } from '../../firebase/userData';
+import { handleChooseImage, handleSave, getUserData,getLocation } from '../../firebase/userData';
 
 const EditProfile = () => {
     const [Name, setName] = useState('');
     const [Address, setAddress] = useState('');
     const [Phone, setPhone] = useState('');
     const [userData, setUserData] = useState(null);
-    const [loading2, setLoading2] = useState(false);
+    const [loading2, setLoading2] = useState(false); // For location loading
+    const [isLoading, setIsLoading] = useState(false); // For saving/loading
     const [image, setImage] = useState(null);
 
-    const [isLoading, setIsLoading] = useState(false);
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -24,63 +24,64 @@ const EditProfile = () => {
         <AlertNotificationRoot>
             <ScrollView style={styles.container}>
                 <View style={styles.imageContainer}>
-                    <TouchableOpacity onPress={() => navigation.navigate('ImageScreen',{imageUri: image} )}>
+                    <TouchableOpacity onPress={() => navigation.navigate('ImageScreen', { imageUri: image })}>
                         <Image source={{ uri: image }} style={styles.image} />
-                </TouchableOpacity>
-                {image === 'https://th.bing.com/th/id/R.222d79e7bde6db5bb2a2ce526504ddac?rik=mBNCmkbm1VHRfg&pid=ImgRaw&r=0' && (
-                    <Text style={styles.noImageText}>No profile image</Text>
-                )}
-                <TouchableOpacity style={styles.chooseImageButton} onPress={() => handleChooseImage(setImage)}>
-                    <Text style={styles.chooseImageButtonText}>Choose image</Text>
-                </TouchableOpacity>
-            </View>
-
-            <View style={styles.form}>
-                <Text style={styles.label}>Name:</Text>
-                <TextInput
-                    style={styles.input}
-                    onChangeText={(text) => setName(text)}
-                    value={Name}
-                    maxLength={16}
-                />
-                <Text style={styles.label}>Phone number:</Text>
-                <TextInput
-                    style={styles.input}
-                    maxLength={11}
-                    onChangeText={(text) => setPhone(text)}
-                    value={Phone === 'none' ? "" : Phone}
-                    placeholder='enter your phone'
-                    keyboardType="phone-pad"
-                />
-                <Text style={styles.label}>Address:</Text>
-                <TextInput
-                    style={styles.input}
-                    onChangeText={(text) => setAddress(text)}
-                    value={Address === 'none' ? "" : Address}
-                    placeholder='enter your address'
-                    keyboardType="default"
-                />
-                {loading2 ? (
-                    <ActivityIndicator size="large" color={Colors.primary} style={{ marginTop: 10 }} />
-                ) : (
-                    <TouchableOpacity style={styles.saveButton2} onPress={() => getLocation(setAddress)}>
-                        <Text style={styles.saveButtonText}>Get Location</Text>
                     </TouchableOpacity>
-                )}
-                {isLoading && <ActivityIndicator size="large" color={Colors.primary} style={{ marginTop: 10 }} />}
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
-                        <Text style={styles.cancelButtonText}>Cancel</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.saveButton} onPress={() => handleSave(Name, Address, Phone, image, setIsLoading, setUserData, navigation)}>
-                        <Text style={styles.saveButtonText}>Save</Text>
+                    {image === 'https://th.bing.com/th/id/R.222d79e7bde6db5bb2a2ce526504ddac?rik=mBNCmkbm1VHRfg&pid=ImgRaw&r=0' && (
+                        <Text style={styles.noImageText}>No profile image</Text>
+                    )}
+                    <TouchableOpacity style={styles.chooseImageButton} onPress={() => handleChooseImage(setImage)}>
+                        <Text style={styles.chooseImageButtonText}>Choose image</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
-        </ScrollView>
-        </AlertNotificationRoot >
+
+                <View style={styles.form}>
+                    <Text style={styles.label}>Name:</Text>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={(text) => setName(text)}
+                        value={Name}
+                        maxLength={16}
+                    />
+                    <Text style={styles.label}>Phone number:</Text>
+                    <TextInput
+                        style={styles.input}
+                        maxLength={11}
+                        onChangeText={(text) => setPhone(text)}
+                        value={Phone === 'none' ? "" : Phone}
+                        placeholder="enter your phone"
+                        keyboardType="phone-pad"
+                    />
+                    <Text style={styles.label}>Address:</Text>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={(text) => setAddress(text)}
+                        value={Address === 'none' ? "" : Address}
+                        placeholder="enter your address"
+                        keyboardType="default"
+                    />
+                    {loading2 ? (
+                        <ActivityIndicator size="large" color={Colors.primary} style={{ marginTop: 10 }} />
+                    ) : (
+                        <TouchableOpacity style={styles.saveButton2} onPress={() => getLocation(setAddress, setLoading2)}>
+                            <Text style={styles.saveButtonText}>Get Location</Text>
+                        </TouchableOpacity>
+                    )}
+                    {isLoading && <ActivityIndicator size="large" color={Colors.primary} style={{ marginTop: 10 }} />}
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
+                            <Text style={styles.cancelButtonText}>Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.saveButton} onPress={() => handleSave(Name, Address, Phone, image, setIsLoading, setUserData, navigation)}>
+                            <Text style={styles.saveButtonText}>Save</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </ScrollView>
+        </AlertNotificationRoot>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {
