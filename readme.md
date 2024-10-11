@@ -43,8 +43,7 @@ Watch the demo video here: [AppleStore Demo Video](https://drive.google.com/file
    PROJECT_ID=<Your Project ID>
    STORAGE_BUCKET=<Your Storage Bucket>
    MESSAGING_SENDER_ID=<Your Messaging Sender ID>
-   APP_ID=<Your App ID>
-   
+   APP_ID=<Your App ID>  
 4. Install dependencies using npm install
 5. Start the app with expo start.
 
